@@ -6,53 +6,163 @@
     <link rel = "stylesheet" href = "style/style.css">
     <script type="text/javascript">
          document.addEventListener("DOMContentLoaded", function(){
-
-             class Check{
-                 constructor(Date, Checknumber,Item,Budgetnumber, cost) {
-                     this.Checknumber = 0;
-                 
+             class Checkbook{
+                 constructor() {
+                     this.Allchecks = [];
                  }
+                 getSubtotal()
+                 {
+                     let subtotal = 0.00
+                     {
+                         for (let i = 0; i < this.Allchecks.length; i++) {
+                              subtotal = subtotal + this.Allchecks[i].cost;
+                         }
+                     }
+                     return subtotal;
+                    }
+         }
+
+         let checkBook = new Checkbook();
+
+
+             class Check {
+             constructor (date, checknumber,item,budgetnumber, cost) {
+                 this.date = date;
+                 this.checknumber = parseInt(checknumber);
+                 this.item = item;
+                 this.budgetnumber = budgetnumber;
+                 this.cost = parseFloat(cost);
 
              }
+             nextCheck(){
+                 return this.checknumber + 1;
+             }
+
+         }
+
              //Constant definitions start here
+             const subtotalText = document.querySelector("input#subtotal")
 
              const Alex = "Alex"
              const checkbookBody = document.querySelector("#tbody");
-             const newRow = `
+
+             //Constant definitions end here
+             const summeryButton = document.querySelector("#summary")
+             summeryButton.addEventListener("click",function(event) {
+
+                 const housingLines = checkBook.                                                                               Allchecks.filter(function (money) {
+                     return money["budgetnumber"] == "Housing"
+
+                 })
+                 const housingSummary = arrayTotal(housingLines, "cost")
+                 const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
+
+
+                 const clothLines = checkBook.Allchecks.filter(function (money) {
+                     return money["budgetnumber"] == "Clothing"
+                 })
+                 // console.log(clothLines)
+                 const clothSummary = arrayTotal(clothLines, "cost")
+                 const utilitiesLines = checkBook.Allchecks.filter(function (money) {
+                     return money["budgetnumber"] == "Utilities"
+                 })
+                 // console.log(utilitiesLines)
+                 const utilitiesSummary = arrayTotal(transportationLines, "cost")
+                 const transportationLines = checkBook.Allchecks.filter(function (money) {
+                     return money["budgetnumber"] == "transportation"
+                 })
+                 // console.log(transportationLines)
+                 const transportationSummary = arrayTotal(transportationLines, "cost")
+                 const entertainmentLines = checkBook.Allchecks.filter(function (money) {
+                     return money["budgetnumber"] == "Entertainment"
+                 })
+
+                 // console.log(entertainmentLines)
+                 const entertainmentSummary = arrayTotal(entertainmentLines, "cost")
+                 const miscellaneousLines = checkBook.Allchecks.filter(function (money) {
+                     return money["budgetnumber"] == "Miscellaneous"
+                 })
+                 const miscellaneousSummary = arrayTotal(miscellaneousLines, "cost")
+                 const foodLines = checkBook.Allchecks.filter(function(money){
+                     return money["budgetnumber"] == "Food"
+                 })
+                 const foodSummary = arrayTotal(foodLinesLines, "cost")
+
+                 // console.log(miscellaneousLines)
+             })//end summeryButton listener
+
+
+             checkbookBody.addEventListener("click",function(event) {
+
+                 // console.log(event);
+                 // save button;
+                 if ( event.target.matches("button") ) {
+
+
+                     // console.log(event.target.parentNode.parentNode)
+                     const tableRow = event.target.parentNode.parentNode;
+                     const date = tableRow.querySelector("input.date").value;
+                     // console.log(date);
+
+
+                     const checknumber = tableRow.querySelector("input.checknumber").value;
+                     // console.log(checknumber);
+
+                     const text = tableRow.querySelector("input.text").value;
+                     console.log(text);
+
+                     const budget_type = tableRow.querySelector("input.budget_type").value;
+                     // console.log(budget_type);
+
+                     const cost = tableRow.querySelector("input.cost").value;
+                     // console.log(cost);
+
+                     const check = new Check(date, checknumber, text, budget_type, cost);
+                     const newRow = `
                 <tr>
                   <td>
                        <input class="date" type="date">
                    </td>
                    <td>
-                       <input type="number" step="1" min="501">
+                       <input type="number" step="1" min="501" class = "checknumber" value="${check.nextCheck()}">
                    </td>
                    <td>
-                       <input class="item" type="text">
+                       <input class="text" type="text">
                    </td>
 
                    <td>
-                       <input type="list" class="budgetType" list="budgetItems">
+                       <input type="list" class="budget_type" list="budgetItems">
                    </td>
                    <td>
-                       <span class="dollar_sign">$</span><input type="number" class="cost">
+                       <span class="dollar_sign">$</span>
+                       <input type="number" class="cost">
                        <button type="button" class="Save">Save</button>
                    </td>
                 </tr>`;
-             //Constant definitions end here
 
-             checkbookBody.addEventListener("click",function(event) {
 
-                 console.log(event);
-                 if ( event.target.matches("button") ) {
 
-                     checkbookBody.insertAdjacentHTML('beforeend',newRow);
-                 };
+                     checkbookBody.insertAdjacentHTML('beforeend', newRow);
+                     checkBook.Allchecks.push(check)
+                     check.nextCheck()
+                     subtotalText.value = checkBook.getSubtotal().toFixed(2);
+                     console.log(check.date)
+                     console.log(check.checknumber)
+                     console.log(check.item)
+                     console.log(check.budgetnumber)
+                     console.log(check.cost)
+
+                 }
+
              });//end of checkbookbody listener
-             console.log(Alex)
-
-              console.log(event.target.parentNode)
-
-
+             const total = 0.0;
+             const arrayTotal = function(total, index) {
+                 const alex = total.reduce(function (total, next) {
+                     return total + next[index]
+                 }, 0);
+                 return alex;
+             }//end arrayTotal
          })//end of Dom loading listener
 
 
@@ -72,6 +182,7 @@
 </datalist>
 
 <h1>Checkbook and Budget Calculator</h1>
+<button type = "button" id = "summary">Summary</button>
 <table id="checkbook">
     <thead>
     <tr>
@@ -88,7 +199,7 @@
             <input type = "date" class = "date">
         </td>
         <td>
-            <input type = "number" step ="1" min="501" class = "Checknumber">
+            <input type = "number" step ="1" min="501" class = "checknumber">
         </td>
         <td>
             <input type = "text" class = "text">
@@ -98,8 +209,8 @@
 
         </td>
         <td>
-            <span>$</span><input type = "number">
-            <button id="btn1">Save</button>
+            <span>$</span><input type = "number" class="cost">
+            <button class="Save">Save</button>
         </td>
 
     </tr>
@@ -108,8 +219,8 @@
     <tfoot>
     <tr>
         <td colspan="4"></td>
-        <td><label for="Subtotal">Subtotal $</label>
-            <input type="number" id = "Subtotal">
+        <td><label for="subtotal">Subtotal $</label>
+            <input type="number" id = "subtotal">
         </td>
     </tr>
     </tfoot>
